@@ -1,19 +1,17 @@
 ﻿using ConsoleGame.Gui;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace ConsoleGame.Game
 {
-    class GameScreen : Window
+    internal class GameScreen : Window
     {
-        const double SPEED_INCREMENT = 0.05;
-        private int width;
-        private int height;
+        private const double SpeedIncrement = 0.05;
+
         public double Speed { get; private set; } = 0.7;
-        private Snake snake = new Snake();
-        private Fruit fruit = new Fruit();
-        private Window scoreWindow = new Window(51, 0, 40, 10, '%');
+        private readonly Snake snake = new Snake();
+        private readonly Fruit fruit = new Fruit();
+        private readonly Window scoreWindow = new Window(51, 0, 40, 10, '%');
 
         public GameScreen(int width, int height) : base(0, 0, width, height, '%')
         {
@@ -23,24 +21,20 @@ namespace ConsoleGame.Game
 
         public void Eat()
         {
-            if (snake.HeadX == fruit.X && snake.HeadY == fruit.Y)
-            {
-                Speed = Speed + SPEED_INCREMENT;
-                snake.Grow(fruit);
-                fruit.PlaceNewFruit();
-                snake.Render(snake.HeadX, snake.HeadY);
-                fruit.Render();
-                RenderScore();
-            }
+            if (snake.HeadX != fruit.X || snake.HeadY != fruit.Y) return;
+            Speed += SpeedIncrement;
+            snake.Grow(fruit);
+            fruit.PlaceNewFruit();
+            snake.Render(snake.HeadX, snake.HeadY);
+            fruit.Render();
+            RenderScore();
         }
 
-        public void SetDir(int x, int y)
+        public void SetDir(int i, int j)
         {
-            if (snake.XDir != -x && snake.YDir != -y)
-            {
-                snake.XDir = x;
-                snake.YDir = y;
-            }
+            if (snake.XDir == -i || snake.YDir == -j) return;
+            snake.XDir = i;
+            snake.YDir = j;
         }
         public bool IsGameOver()
         {
@@ -48,14 +42,8 @@ namespace ConsoleGame.Game
             {
                 return true;
             }
-            for (int i = 0; i < snake.Xs.Count; i++)
-            {
-                if (snake.HeadX == snake.Xs[i] && snake.HeadY == snake.Ys[i])
-                {
-                    return true;
-                }
-            }
-            return false;
+
+            return snake.Xs.Where((t, i) => snake.HeadX == t && snake.HeadY == snake.Ys[i]).Any();
         }
         public override void Render()
         {

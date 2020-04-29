@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ConsoleGame.Game
 {
     class Fruit
     {
         const char FRUIT_CHAR = 'O';
-        const ConsoleColor FRUIT_COLOUR = ConsoleColor.White;
+        public static ConsoleColor FruitColor { get; } = ConsoleColor.White;
         public int X { get; set; }
         public int Y { get; set; }
         public Fruit()
@@ -23,7 +21,7 @@ namespace ConsoleGame.Game
         public void Render()
         {
             Console.SetCursorPosition(X, Y);
-            Console.ForegroundColor = FRUIT_COLOUR;
+            Console.ForegroundColor = FruitColor;
             Console.Write(FRUIT_CHAR);
         }
     }
